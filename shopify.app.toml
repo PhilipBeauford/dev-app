@@ -2,7 +2,7 @@
 
 name = "dev-app"
 client_id = "b7b4ad6bf46287cf8049270cad0a39a8"
-application_url = "https://developer-revision-ferrari-harder.trycloudflare.com"
+application_url = "https://timeline-receive-yamaha-competent.trycloudflare.com"
 embedded = true
 
 [access_scopes]
@@ -11,9 +11,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://developer-revision-ferrari-harder.trycloudflare.com/auth/callback",
-  "https://developer-revision-ferrari-harder.trycloudflare.com/auth/shopify/callback",
-  "https://developer-revision-ferrari-harder.trycloudflare.com/api/auth/callback"
+  "https://timeline-receive-yamaha-competent.trycloudflare.com/auth/callback",
+  "https://timeline-receive-yamaha-competent.trycloudflare.com/auth/shopify/callback",
+  "https://timeline-receive-yamaha-competent.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

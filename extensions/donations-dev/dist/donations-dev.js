@@ -689,6 +689,9 @@
   // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/InlineLayout/InlineLayout.mjs
   var InlineLayout = createRemoteComponent("InlineLayout");
 
+  // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/Pressable/Pressable.mjs
+  var Pressable = createRemoteComponent("Pressable");
+
   // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/Select/Select.mjs
   var Select = createRemoteComponent("Select");
 
@@ -701,21 +704,21 @@
   // extensions/donations-dev/src/Checkout.js
   var Checkout_default = extension("Checkout::Dynamic::Render", (root, { lines, applyCartLinesChange, query, i18n }) => {
     lines.subscribe((value) => __async(void 0, null, function* () {
-      if (value) {
-        let filteredArray = [];
-        lines.current.forEach((lineObj) => {
-          if (lineObj.merchandise.title == "Carry On Foundation Donation") {
-            filteredArray.push(lineObj);
-          }
-        });
-        if (filteredArray[0].quantity > 2 && selector.props.value != filteredArray[0].quantity && selector.props.value != 0) {
-          const result2 = yield applyCartLinesChange({
-            type: "removeCartLine",
-            id: filteredArray[0].id,
-            // Needs reliable line item id number
-            quantity: filteredArray[0].quantity - selector.props.value
-          });
+      console.log("lines running", lines);
+      let filteredArray = [];
+      lines.current.forEach((lineObj) => {
+        if (lineObj.merchandise.title == "Carry On Foundation Donation") {
+          filteredArray.push(lineObj);
         }
+      });
+      console.log("filteredARray", filteredArray);
+      if (filteredArray[0].quantity > 2 && selector.props.value != filteredArray[0].quantity && selector.props.value != 0) {
+        const result2 = yield applyCartLinesChange({
+          type: "removeCartLine",
+          id: filteredArray[0].id,
+          // Needs reliable line item id number
+          quantity: filteredArray[0].quantity - selector.props.value
+        });
       }
     }));
     const checkDrop = root.createComponent(
@@ -729,78 +732,132 @@
       },
       [
         root.createComponent(
-          BlockStack,
-          {},
+          Pressable,
+          {
+            toggles: "one",
+            onPress: () => __async(void 0, null, function* () {
+              console.log("pressable", checkDrop);
+              console.log("pressdrop checkbox status", checkDrop.children[0].children[0].children[1].children[0].props);
+              if (checkDrop.children[0].children[0].children[1].children[0].props.checked == "") {
+                console.log("yes the if statement is firing");
+                checkDrop.updateProps({ border: ["none", "none", "base", "none"] });
+                checkDrop.children[0].children[0].children[1].children[0].updateProps({ checked: "false" });
+                const result = yield applyCartLinesChange({
+                  type: "addCartLine",
+                  merchandiseId: "gid://shopify/ProductVariant/45393245176115",
+                  quantity: 2
+                });
+                if (result.type === "error") {
+                  console.error("error", result.message);
+                  const errorComponent = root.createComponent(
+                    Banner,
+                    { status: "critical" },
+                    ["There was an issue adding this product. Please try again."]
+                  );
+                  const topLevelComponent = root.children[0];
+                  topLevelComponent.appendChild(errorComponent);
+                  setTimeout(
+                    () => topLevelComponent.removeChild(errorComponent),
+                    3e3
+                  );
+                }
+              } else if (checkDrop.children[0].children[0].children[1].children[0].props.checked == "false") {
+                checkDrop.updateProps({ border: ["none", "none", "none", "none"] });
+                checkDrop.children[0].children[0].children[1].children[0].updateProps({ checked: "" });
+                let filteredArray = [];
+                lines.current.forEach((lineObj) => {
+                  if (lineObj.merchandise.title == "Carry On Foundation Donation") {
+                    filteredArray.push(lineObj);
+                  }
+                });
+                filteredArray.forEach((donation) => __async(void 0, null, function* () {
+                  const removeLines = yield applyCartLinesChange({
+                    type: "removeCartLine",
+                    id: donation.id,
+                    // Needs reliable line item id number
+                    quantity: donation.quantity
+                  });
+                }));
+              }
+            })
+          },
           [
-            root.createComponent(Image, {
-              source: "https://cdn.shopify.com/s/files/1/1030/4291/files/logo-donations.svg?v=1690579195"
-            }),
             root.createComponent(
-              InlineLayout,
-              {
-                blockAlignment: "center",
-                spacing: "base",
-                columns: ["auto", "fill"],
-                padding: "none",
-                border: ["none", "none", "none", "none"]
-              },
+              BlockStack,
+              {},
               [
-                root.createComponent(Checkbox, {
-                  toggles: "one",
-                  checked: "",
-                  onChange: () => __async(void 0, null, function* () {
-                    if (checkDrop.children[0].children[1].children[0].props.checked == "") {
-                      checkDrop.updateProps({ border: ["none", "none", "base", "none"] });
-                      checkDrop.children[0].children[1].children[0].updateProps({ checked: "false" });
-                      const result = yield applyCartLinesChange({
-                        type: "addCartLine",
-                        merchandiseId: "gid://shopify/ProductVariant/45393245176115",
-                        quantity: 2
-                      });
-                      if (result.type === "error") {
-                        console.error("error", result.message);
-                        const errorComponent = root.createComponent(
-                          Banner,
-                          { status: "critical" },
-                          ["There was an issue adding this product. Please try again."]
-                        );
-                        const topLevelComponent = root.children[0];
-                        topLevelComponent.appendChild(errorComponent);
-                        setTimeout(
-                          () => topLevelComponent.removeChild(errorComponent),
-                          3e3
-                        );
-                      }
-                    } else if (checkDrop.children[0].children[1].children[0].props.checked == "false") {
-                      checkDrop.updateProps({ border: ["none", "none", "none", "none"] });
-                      checkDrop.children[0].children[1].children[0].updateProps({ checked: "" });
-                      let filteredArrayOne = [];
-                      lines.current.forEach((lineObj) => {
-                        if (lineObj.merchandise.title == "Carry On Foundation Donation") {
-                          filteredArrayOne.push(lineObj);
-                        }
-                      });
-                      filteredArrayOne.forEach((donation) => __async(void 0, null, function* () {
-                        const removeLines = yield applyCartLinesChange({
-                          type: "removeCartLine",
-                          id: donation.id,
-                          // Needs reliable line item id number
-                          quantity: donation.quantity
-                        });
-                      }));
-                    }
-                  })
+                root.createComponent(Image, {
+                  source: "https://cdn.shopify.com/s/files/1/0728/3494/1235/files/logo_3.svg?v=1690579006"
                 }),
-                "Show your support for the Carry On Foundation."
+                root.createComponent(
+                  InlineLayout,
+                  {
+                    blockAlignment: "center",
+                    spacing: "base",
+                    columns: ["auto", "fill"],
+                    padding: "none",
+                    border: ["none", "none", "none", "none"]
+                  },
+                  [
+                    root.createComponent(Checkbox, {
+                      toggles: "one",
+                      checked: "",
+                      onChange: () => __async(void 0, null, function* () {
+                        if (checkDrop.children[0].children[0].children[1].children[0].props.checked == "") {
+                          checkDrop.updateProps({ border: ["none", "none", "base", "none"] });
+                          checkDrop.children[0].children[0].children[1].children[0].updateProps({ checked: "false" });
+                          const result = yield applyCartLinesChange({
+                            type: "addCartLine",
+                            merchandiseId: "gid://shopify/ProductVariant/45393245176115",
+                            quantity: 2
+                          });
+                          if (result.type === "error") {
+                            console.error("error", result.message);
+                            const errorComponent = root.createComponent(
+                              Banner,
+                              { status: "critical" },
+                              ["There was an issue adding this product. Please try again."]
+                            );
+                            const topLevelComponent = root.children[0];
+                            topLevelComponent.appendChild(errorComponent);
+                            setTimeout(
+                              () => topLevelComponent.removeChild(errorComponent),
+                              3e3
+                            );
+                          }
+                        } else if (checkDrop.children[0].children[0].children[1].children[0].props.checked == "false") {
+                          checkDrop.updateProps({ border: ["none", "none", "none", "none"] });
+                          checkDrop.children[0].children[1].children[0].updateProps({ checked: "" });
+                          let filteredArray = [];
+                          lines.current.forEach((lineObj) => {
+                            if (lineObj.merchandise.title == "Carry On Foundation Donation") {
+                              filteredArray.push(lineObj);
+                            }
+                          });
+                          filteredArray.forEach((donation) => __async(void 0, null, function* () {
+                            const removeLines = yield applyCartLinesChange({
+                              type: "removeCartLine",
+                              id: donation.id,
+                              // Needs reliable line item id number
+                              quantity: donation.quantity
+                            });
+                          }));
+                        }
+                      })
+                    }),
+                    "$2- Show your support for the Carry On Foundation."
+                  ]
+                )
               ]
             )
           ]
         )
       ]
     );
+    console.log("checkDrop", checkDrop.children[0].children[0].children[1].children[0].props);
     const selector = root.createComponent(Select, {
       label: "Donation amount",
-      value: 0,
+      value: 2,
       id: "donate-select",
       options: [
         {
@@ -866,7 +923,7 @@
                 InlineLayout,
                 {
                   columns: ["fill", "fill"],
-                  spacing: "base"
+                  spacing: "none"
                 },
                 [
                   root.createComponent(Button, {
