@@ -680,6 +680,9 @@
   // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/Form/Form.mjs
   var Form = createRemoteComponent("Form");
 
+  // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/Icon/Icon.mjs
+  var Icon = createRemoteComponent("Icon");
+
   // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/Image/Image.mjs
   var Image = createRemoteComponent("Image");
 
@@ -727,7 +730,7 @@
       {
         blockAlignment: "center",
         spacing: "base",
-        columns: ["auto", "fill"],
+        columns: [],
         padding: "loose",
         border: ["none", "none", "none", "none"]
       },
@@ -737,8 +740,9 @@
           {
             toggles: "one",
             onPress: () => __async(void 0, null, function* () {
-              console.log("pressable", checkDrop);
-              console.log("pressdrop checkbox status", checkDrop.children[0].children[0].children[1].children[0].props);
+              console.log("pressable", Pressable);
+              console.log("checkdrop", checkDrop);
+              console.log("disclosure", donationWidget);
               if (checkDrop.children[0].children[0].children[1].children[0].props.checked == "") {
                 console.log("yes the if statement is firing");
                 checkDrop.updateProps({ border: ["none", "none", "base", "none"] });
@@ -795,12 +799,13 @@
                   {
                     blockAlignment: "center",
                     spacing: "base",
-                    columns: ["auto", "fill"],
+                    columns: ["fill", "auto"],
                     padding: "none",
                     border: ["none", "none", "none", "none"]
                   },
                   [
-                    root.createComponent(Text, { size: "base" }, "Show your support for the Carry On Foundation")
+                    root.createComponent(Text, { size: "base" }, "Show your support for the Carry On Foundation"),
+                    root.createComponent(Icon, { source: "chevronDown", size: "small" })
                   ]
                 )
               ]
