@@ -362,13 +362,11 @@ import {
     Select,
     Banner,
     Pressable,
+	Icon,
 } from '@shopify/ui-extensions/checkout';
 
 
-
-
 export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartLinesChange, query, i18n }) => {
-
 
     // Subscribe to changes to cart lines. When donations added, remove old donations
     lines.subscribe(async(value) => {
@@ -384,7 +382,6 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
                 if(lineObj.merchandise.title == 'Carry On Foundation Donation') {
                     filteredArray.push(lineObj);
                 }
-
             })
 			
 			console.log('filteredARray', filteredArray[0]);
@@ -414,19 +411,24 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
         {
             blockAlignment: 'center',
             spacing: 'base',
-            columns: ['auto', 'fill'],
+            columns: [],
             padding: 'loose',
             border: ['none', 'none', 'none', 'none'],
         },
         [
-           
+
             root.createComponent(Pressable,
                 {
                     toggles: 'one',
                     onPress: async () => {
 
-						console.log('pressable', checkDrop);
-						console.log('pressdrop checkbox status', checkDrop.children[0].children[0].children[1].children[0].props);
+						console.log('pressable', Pressable);
+						console.log('checkdrop', checkDrop);
+						console.log('disclosure', donationWidget);
+
+
+						
+						// console.log('pressdrop checkbox status', checkDrop.children[0].children[0].children[1].children[0].props);
 
                        
                             // If checkbox is checked, add a bottom border & update props
@@ -490,8 +492,7 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
                                 })
                             }
                     }
-                   
-                   
+
                 },
                 [
                     root.createComponent(BlockStack, {},
@@ -505,13 +506,15 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
                                 {
                                     blockAlignment: 'center',
                                     spacing: 'base',
-                                    columns: ['auto', 'fill'],
+                                    columns: ['fill', 'auto'],
                                     padding: 'none',
                                     border: ['none', 'none', 'none', 'none'],
                                 },
                                 [
            
                                     root.createComponent(Text, {size:'base'}, 'Show your support for the Carry On Foundation'),
+									root.createComponent(Icon, {source: 'chevronDown', size: 'small'}),
+
                                 ]
                             ),
                         ])
@@ -724,8 +727,6 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
     },
     [checkDrop, disclosureView],
     );
-
-
 
 
     // Main app that contains the donation widget
