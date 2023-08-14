@@ -2,7 +2,7 @@
 
 name = "dev-app"
 client_id = "b7b4ad6bf46287cf8049270cad0a39a8"
-application_url = "https://timeline-receive-yamaha-competent.trycloudflare.com"
+application_url = "https://advisors-reliability-trees-mix.trycloudflare.com"
 embedded = true
 
 [access_scopes]
@@ -11,9 +11,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://timeline-receive-yamaha-competent.trycloudflare.com/auth/callback",
-  "https://timeline-receive-yamaha-competent.trycloudflare.com/auth/shopify/callback",
-  "https://timeline-receive-yamaha-competent.trycloudflare.com/api/auth/callback"
+  "https://advisors-reliability-trees-mix.trycloudflare.com/auth/callback",
+  "https://advisors-reliability-trees-mix.trycloudflare.com/auth/shopify/callback",
+  "https://advisors-reliability-trees-mix.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

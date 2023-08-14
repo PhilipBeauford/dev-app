@@ -373,6 +373,8 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
     // Subscribe to changes to cart lines. When donations added, remove old donations
     lines.subscribe(async(value) => {
         
+		if(value) {
+			
 			console.log('lines running', lines);
             let filteredArray = [];
 
@@ -385,7 +387,8 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
 
             })
 			
-			console.log('filteredARray', filteredArray);
+			console.log('filteredARray', filteredArray[0]);
+			console.log('selector.props.value', selector.props.value);
 
 
             if(filteredArray[0].quantity > 2 && selector.props.value != filteredArray[0].quantity && selector.props.value != 0) {
@@ -397,7 +400,11 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
                     id: filteredArray[0].id, // Needs reliable line item id number
                     quantity: filteredArray[0].quantity - selector.props.value,
                 });
+				
+				console.log('res2', result2);
             }
+		}
+
         
     });
 
@@ -462,19 +469,19 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
                                 checkDrop.children[0].children[0].children[1].children[0].updateProps( {checked: ""})
 
 
-                                let filteredArray = [];
+                                let filteredArrayOne = [];
 
 
                                 // Grab lines objects only if title matches
                                 lines.current.forEach(lineObj => {
                                     if(lineObj.merchandise.title == 'Carry On Foundation Donation') {
-                                        filteredArray.push(lineObj);
+                                        filteredArrayOne.push(lineObj);
                                     }
                                 })
 
 
                                 //Remove added donations/cart lines
-                                filteredArray.forEach(async donation => {
+                                filteredArrayOne.forEach(async donation => {
                                     const removeLines = await applyCartLinesChange({
                                         type: "removeCartLine",
                                         id: donation.id, // Needs reliable line item id number
@@ -504,66 +511,7 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
                                 },
                                 [
            
-                                    root.createComponent(Checkbox, {
-                                        toggles: "one",
-                                        checked: "",
-                                        onChange: async () => {
-                                       
-                                        // If checkbox is checked, add a bottom border & update props
-                                        if( checkDrop.children[0].children[0].children[1].children[0].props.checked == "") {
-                                            checkDrop.updateProps({ border: ['none', 'none', 'base', 'none']});
-                                            checkDrop.children[0].children[0].children[1].children[0].updateProps( {checked: "false"});
-           
-                                            // Auto add to cart $2 donation
-                                            const result = await applyCartLinesChange({
-                                                type: "addCartLine",
-                                                merchandiseId: 'gid://shopify/ProductVariant/45393245176115',
-                                                quantity: 2,
-                                            });
-           
-                                            if (result.type === "error") {
-                                            // An error occurred adding the cart line
-                                            // Verify that you're using a valid product variant ID
-                                            // For example, 'gid://shopify/ProductVariant/123'
-                                            console.error('error', result.message);
-                                            const errorComponent = root.createComponent(
-                                                Banner,
-                                                { status: "critical" },
-                                                ["There was an issue adding this product. Please try again."]
-                                            );
-                                            // Render an error Banner as a child of the top-level app component for three seconds, then remove it
-                                            const topLevelComponent = root.children[0];
-                                            topLevelComponent.appendChild(errorComponent);
-                                            setTimeout(
-                                                () => topLevelComponent.removeChild(errorComponent),
-                                                3000
-                                            );
-                                            }
-                                        } else if(checkDrop.children[0].children[0].children[1].children[0].props.checked == 'false') {
-                                            checkDrop.updateProps({ border: ['none', 'none', 'none', 'none']});
-                                            checkDrop.children[0].children[1].children[0].updateProps( {checked: ""})
-           
-                                            let filteredArray = [];
-           
-                                            // Grab lines objects only if title matches
-                                            lines.current.forEach(lineObj => {
-                                                if(lineObj.merchandise.title == 'Carry On Foundation Donation') {
-                                                    filteredArray.push(lineObj);
-                                                }
-                                            })
-           
-                                            //Remove added donations/cart lines
-                                            filteredArray.forEach(async donation => {
-                                                const removeLines = await applyCartLinesChange({
-                                                    type: "removeCartLine",
-                                                    id: donation.id, // Needs reliable line item id number
-                                                    quantity: donation.quantity,
-                                                });
-                                            })
-                                        }
-                                        }
-                                    }),
-                                    '$2- Show your support for the Carry On Foundation.',
+                                    root.createComponent(Text, {size:'base'}, 'Show your support for the Carry On Foundation'),
                                 ]
                             ),
                         ])
