@@ -816,10 +816,10 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
     {
         open: 'false',
         onToggle: (open) => {
-            if (donationWidget.props.open == '' || donationWidget.props.open == 'false') {
+            if (donationWidget.props.open == 'false') {
                 // donationWidget.updateProps({open: 'one'})
 				
-				console.log('disclosure is "" or false');
+				console.log('disclosure is  false');
 				
 				
 				storage.write('whatTheH', 'one');
@@ -852,6 +852,9 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
 				
             } else {
                 // donationWidget.updateProps({open: 'false'})
+				
+				console.log('disclosure is "one"');
+
 				
 				storage.write('whatTheH', 'false');
 				// .then( (value) => { return value})

@@ -2,7 +2,7 @@
 
 name = "dev-app"
 client_id = "b7b4ad6bf46287cf8049270cad0a39a8"
-application_url = "https://editors-shoppers-consultant-salon.trycloudflare.com"
+application_url = "https://queen-responsibilities-webmasters-mounted.trycloudflare.com"
 embedded = true
 
 [access_scopes]
@@ -11,9 +11,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://editors-shoppers-consultant-salon.trycloudflare.com/auth/callback",
-  "https://editors-shoppers-consultant-salon.trycloudflare.com/auth/shopify/callback",
-  "https://editors-shoppers-consultant-salon.trycloudflare.com/api/auth/callback"
+  "https://queen-responsibilities-webmasters-mounted.trycloudflare.com/auth/callback",
+  "https://queen-responsibilities-webmasters-mounted.trycloudflare.com/auth/shopify/callback",
+  "https://queen-responsibilities-webmasters-mounted.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

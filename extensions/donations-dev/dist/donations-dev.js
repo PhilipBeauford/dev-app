@@ -1045,8 +1045,8 @@
       {
         open: "false",
         onToggle: (open) => {
-          if (donationWidget.props.open == "" || donationWidget.props.open == "false") {
-            console.log('disclosure is "" or false');
+          if (donationWidget.props.open == "false") {
+            console.log("disclosure is  false");
             storage.write("whatTheH", "one");
             function getValueFromStoredValue2() {
               return __async(this, null, function* () {
@@ -1072,6 +1072,7 @@
             };
             wth();
           } else {
+            console.log('disclosure is "one"');
             storage.write("whatTheH", "false");
             function getValueFromStoredValue2() {
               return __async(this, null, function* () {
