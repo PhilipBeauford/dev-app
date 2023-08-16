@@ -366,14 +366,44 @@ import {
 } from '@shopify/ui-extensions/checkout';
 
 
-export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartLinesChange, query, i18n }) => {
+export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartLinesChange, query, storage}) => {
+	
+	
+	async function getValueFromStoredValue() {
+		try {
+		  const storedValue = storage.read('whatTheH');
+		  const value = await storedValue;
+		  return value; // Return the resolved value
+		} catch (error) {
+		  throw error; // Re-throw the error if the Promise is rejected
+		}
+	  }
+	  
+
+	const wthTwo =  async function someAsyncFunction() {
+		try {
+		  const value = await getValueFromStoredValue();
+		  
+		  donationWidget.updateProps({open: value});
+		  
+		  return value; // Output: "false"
+		} catch (error) {
+		  console.error(error);
+		}
+	  }
+	  
+	  wthTwo()
+	
+	
+	
 
     // Subscribe to changes to cart lines. When donations added, remove old donations
     lines.subscribe(async(value) => {
         
 		if(value) {
 			
-			console.log('lines running', lines);
+			console.log('lines ran', lines);
+			
             let filteredArray = [];
 
 
@@ -384,25 +414,30 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
                 }
             })
 			
-			console.log('filteredARray', filteredArray[0]);
-			console.log('selector.props.value', selector.props.value);
+			console.log('filteredARray', filteredArray);
+			
+			
 
-
-            if(filteredArray[0].quantity > 2 && selector.props.value != filteredArray[0].quantity && selector.props.value != 0) {
-
-
-                // Remove added donations/cart lines
-                const result2 = await applyCartLinesChange({
-                    type: "removeCartLine",
-                    id: filteredArray[0].id, // Needs reliable line item id number
-                    quantity: filteredArray[0].quantity - selector.props.value,
-                });
+            if(filteredArray.length > 1  ) {
 				
-				console.log('res2', result2);
+				console.log('linesIf running');
+				
+				if(filteredArray[0] != filteredArray.lastItem){
+					
+					console.log('SECOND linesIf ran');
+
+					
+					// Remove added donations/cart lines
+					const result2 = await applyCartLinesChange({
+						type: "removeCartLine",
+						id: filteredArray[0].id, // Needs reliable line item id number
+						quantity: 1,
+					});
+				}
+
+
             }
 		}
-
-        
     });
 
 
@@ -422,29 +457,22 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
                     toggles: 'one',
                     onPress: async () => {
 
-						console.log('pressable', Pressable);
-						console.log('checkdrop', checkDrop);
 						console.log('disclosure', donationWidget);
 
 
-						
-						// console.log('pressdrop checkbox status', checkDrop.children[0].children[0].children[1].children[0].props);
-
-                       
                             // If checkbox is checked, add a bottom border & update props
-                            if( checkDrop.children[0].children[0].children[1].children[0].props.checked == '') {
+                            if( donationWidget.props.open == "false" || donationWidget.props.open == "") {
 								
 								console.log('yes the if statement is firing')
 								
-                                checkDrop.updateProps({ border: ['none', 'none', 'base', 'none']});
-                                checkDrop.children[0].children[0].children[1].children[0].updateProps( {checked: "false"});
+                                // checkDrop.updateProps({ border: ['none', 'none', 'base', 'none']});
 
 
                                 // Auto add to cart $2 donation
                                 const result = await applyCartLinesChange({
                                     type: "addCartLine",
-                                    merchandiseId: 'gid://shopify/ProductVariant/45393245176115',
-                                    quantity: 2,
+                                    merchandiseId: 'gid://shopify/ProductVariant/46322811928883',
+                                    quantity: 1,
                                 });
 
 
@@ -466,9 +494,8 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
                                     3000
                                 );
                                 }
-                            } else if(checkDrop.children[0].children[0].children[1].children[0].props.checked == 'false') {
-                                checkDrop.updateProps({ border: ['none', 'none', 'none', 'none']});
-                                checkDrop.children[0].children[0].children[1].children[0].updateProps( {checked: ""})
+                            } else if(donationWidget.props.open == 'one') {
+                                // checkDrop.updateProps({ border: ['none', 'none', 'none', 'none']});
 
 
                                 let filteredArrayOne = [];
@@ -526,7 +553,6 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
         ],
     );
    
-    console.log('checkDrop', checkDrop.children[0].children[0].children[1].children[0].props);
 
 
     const selector =    root.createComponent(Select, {
@@ -601,100 +627,170 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
                     InlineLayout,
                     {
                     columns: ['fill', 'fill'],
-                    spacing: 'none',
+                    spacing: 'base',
                     },
                     [
                         root.createComponent(Button, {
                             kind: 'primary',
-                            id: 'Button2',
+							accessibilityRole: 'submit',
+
+                            id: 'Button1',
                             // appearance: Style.when({hover: true}, 'accent'),
-                            onPress: () => {
-                                selector.updateProps({ value: 2 });
+                            onPress: async () => {
+                                selector.updateProps({ value: 1 });
                                 disclosureView.children[0].children[0].children[0].children[0].updateProps({kind: 'primary'})
                                 disclosureView.children[0].children[0].children[0].children[1].updateProps({kind: 'secondary'})
                                 disclosureView.children[0].children[0].children[0].children[2].updateProps({kind: 'secondary'})
+								
+								// Apply the cart lines change
+								const result = await applyCartLinesChange({
+									type: "addCartLine",
+									merchandiseId: 'gid://shopify/ProductVariant/46322811928883',
+									quantity: 1,
+								});
                             }
-                        }, '$2'),
+                        }, '$1'),
 
 
                         root.createComponent(Button, {
                             kind: 'secondary',
+							accessibilityRole: 'submit',
+
                             id: 'Button5',
-                            onPress: () => {
+                            onPress: async () => {
                                 selector.updateProps({ value: 5 });
                                 disclosureView.children[0].children[0].children[0].children[0].updateProps({kind: 'secondary'})
                                 disclosureView.children[0].children[0].children[0].children[1].updateProps({kind: 'primary'})
                                 disclosureView.children[0].children[0].children[0].children[2].updateProps({kind: 'secondary'})
+								
+								// Apply the cart lines change
+								const result = await applyCartLinesChange({
+									type: "addCartLine",
+									merchandiseId: 'gid://shopify/ProductVariant/46322811961651',
+									quantity: 1,
+								});
+								
+								
+								
+								
+								let filteredArray = [];
+
+
+								// Grab line objects only if titles match donation
+								lines.current.forEach(lineObj => {
+									if(lineObj.merchandise.title == 'Carry On Foundation Donation') {
+										filteredArray.push(lineObj);
+									}
+								})
+								
+								
+								
+								                // Remove added donations/cart lines
+												const result2 = await applyCartLinesChange({
+													type: "removeCartLine",
+													id: 'gid://shopify/ProductVariant/46322811928883', // Needs reliable line item id number
+													quantity: 1,
+												});
                             }
                         }, '$5'),
 
 
                         root.createComponent(Button, {
                             kind: 'secondary',
+							accessibilityRole: 'submit',
+
                             id: 'Button10',
-                            onPress: () => {
+                            onPress: async () => {
                                 selector.updateProps({ value: 10 });
                                 disclosureView.children[0].children[0].children[0].children[0].updateProps({kind: 'secondary'})
                                 disclosureView.children[0].children[0].children[0].children[1].updateProps({kind: 'secondary'})
                                 disclosureView.children[0].children[0].children[0].children[2].updateProps({kind: 'primary'})
+								
+								
+								// Apply the cart lines change
+								const result = await applyCartLinesChange({
+									type: "addCartLine",
+									merchandiseId: 'gid://shopify/ProductVariant/46322811994419',
+									quantity: 1,
+								});
+								
+								if (result.type === "error") {
+									// An error occurred adding the cart line
+									// Verify that you're using a valid product variant ID
+									// For example, 'gid://shopify/ProductVariant/123'
+									console.error('error', result.message);
+									const errorComponent = root.createComponent(
+										Banner,
+										{ status: "critical" },
+										["There was an issue adding this product. Please try again."]
+									);
+									// Render an error Banner as a child of the top-level app component for three seconds, then remove it
+									const topLevelComponent = root.children[0];
+									topLevelComponent.appendChild(errorComponent);
+									setTimeout(
+										() => topLevelComponent.removeChild(errorComponent),
+										3000
+									);
+								}
                             }
                         }, '$10'),
                     ],
                 ),
 
 
-                root.createComponent(
-                    InlineLayout,
-                    {
-                    columns: ['fill', 'auto'],
-                    spacing: 'base',
-                    },
-                    [
-                        selector,
+				// THIS BLOCK WILL BE REMOVED
+                // root.createComponent(
+                //     InlineLayout,
+                //     {
+                //     columns: ['fill', 'auto'],
+                //     spacing: 'base',
+                //     },
+                //     [
+                //         selector,
 
 
-                        root.createComponent(View, {}, [
-                            root.createComponent(
-                            Button,
-                            {
-                                accessibilityRole: 'submit',
-                                kind: 'primary',
-                                onPress: async () => {
+                //         root.createComponent(View, {}, [
+                //             root.createComponent(
+                //             Button,
+                //             {
+                //                 accessibilityRole: 'submit',
+                //                 kind: 'primary',
+                //                 onPress: async () => {
 
 
-                                        // Apply the cart lines change
-                                        const result = await applyCartLinesChange({
-                                            type: "addCartLine",
-                                            merchandiseId: 'gid://shopify/ProductVariant/45393245176115',
-                                            quantity: parseInt(selector.props.value),
-                                        });
+                //                         // Apply the cart lines change
+                //                         const result = await applyCartLinesChange({
+                //                             type: "addCartLine",
+                //                             merchandiseId: 'gid://shopify/ProductVariant/45393245176115',
+                //                             quantity: parseInt(selector.props.value),
+                //                         });
 
 
-                                        if (result.type === "error") {
-                                            // An error occurred adding the cart line
-                                            // Verify that you're using a valid product variant ID
-                                            // For example, 'gid://shopify/ProductVariant/123'
-                                            console.error('error', result.message);
-                                            const errorComponent = root.createComponent(
-                                                Banner,
-                                                { status: "critical" },
-                                                ["There was an issue adding this product. Please try again."]
-                                            );
-                                            // Render an error Banner as a child of the top-level app component for three seconds, then remove it
-                                            const topLevelComponent = root.children[0];
-                                            topLevelComponent.appendChild(errorComponent);
-                                            setTimeout(
-                                                () => topLevelComponent.removeChild(errorComponent),
-                                                3000
-                                            );
-                                        }
-                                },
-                            },
-                            'Update',
-                            ),
-                        ]),
-                    ],
-                ),
+                //                         if (result.type === "error") {
+                //                             // An error occurred adding the cart line
+                //                             // Verify that you're using a valid product variant ID
+                //                             // For example, 'gid://shopify/ProductVariant/123'
+                //                             console.error('error', result.message);
+                //                             const errorComponent = root.createComponent(
+                //                                 Banner,
+                //                                 { status: "critical" },
+                //                                 ["There was an issue adding this product. Please try again."]
+                //                             );
+                //                             // Render an error Banner as a child of the top-level app component for three seconds, then remove it
+                //                             const topLevelComponent = root.children[0];
+                //                             topLevelComponent.appendChild(errorComponent);
+                //                             setTimeout(
+                //                                 () => topLevelComponent.removeChild(errorComponent),
+                //                                 3000
+                //                             );
+                //                         }
+                //                 },
+                //             },
+                //             'Update',
+                //             ),
+                //         ]),
+                //     ],
+                // ),
 
 
                 root.createComponent(
@@ -711,6 +807,8 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
     );
 
 
+
+	
     // Disclosure is a drop-down container
     // Checkbox container & disclosureView are rendered on toggle
     const donationWidget = root.createComponent(
@@ -718,15 +816,77 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
     {
         open: 'false',
         onToggle: (open) => {
-            if (donationWidget.props.open == "false") {
-                donationWidget.updateProps({open: 'one'})
+            if (donationWidget.props.open == '' || donationWidget.props.open == 'false') {
+                // donationWidget.updateProps({open: 'one'})
+				
+				console.log('disclosure is "" or false');
+				
+				
+				storage.write('whatTheH', 'one');
+				// .then( (value) => { return value})
+			
+				async function getValueFromStoredValue() {
+					try {
+					  const storedValue = storage.read('whatTheH');
+					  const value = await storedValue;
+					  return value; // Return the resolved value
+					} catch (error) {
+					  throw error; // Re-throw the error if the Promise is rejected
+					}
+				  }
+				  
+			
+				const wth =  async function someAsyncFunction() {
+					try {
+					  const value = await getValueFromStoredValue();
+					  
+					  donationWidget.updateProps({open: value});
+					  
+					  return value; // Output: "false"
+					} catch (error) {
+					  console.error(error);
+					}
+				  }
+				  
+				  wth()
+				
             } else {
-                donationWidget.updateProps({open: 'false'})
+                // donationWidget.updateProps({open: 'false'})
+				
+				storage.write('whatTheH', 'false');
+				// .then( (value) => { return value})
+			
+				async function getValueFromStoredValue() {
+					try {
+					  const storedValue = storage.read('whatTheH');
+					  const value = await storedValue;
+					  return value; // Return the resolved value
+					} catch (error) {
+					  throw error; // Re-throw the error if the Promise is rejected
+					}
+				  }
+				  
+			
+				const wth =  async function someAsyncFunction() {
+					try {
+					  const value = await getValueFromStoredValue();
+					  
+					  donationWidget.updateProps({open: value});
+					  
+					  return value; // Output: "false"
+					} catch (error) {
+					  console.error(error);
+					}
+				  }
+				  
+				  wth()
             }
         }
     },
     [checkDrop, disclosureView],
     );
+	
+
 
 
     // Main app that contains the donation widget

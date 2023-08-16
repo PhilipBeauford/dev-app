@@ -702,26 +702,51 @@
   var View = createRemoteComponent("View");
 
   // extensions/donations-dev/src/Checkout.js
-  var Checkout_default = extension("Checkout::Dynamic::Render", (root, { lines, applyCartLinesChange, query, i18n }) => {
+  var Checkout_default = extension("Checkout::Dynamic::Render", (root, { lines, applyCartLinesChange, query, storage }) => {
+    function getValueFromStoredValue() {
+      return __async(this, null, function* () {
+        try {
+          const storedValue = storage.read("whatTheH");
+          const value = yield storedValue;
+          return value;
+        } catch (error) {
+          throw error;
+        }
+      });
+    }
+    const wthTwo = function someAsyncFunction() {
+      return __async(this, null, function* () {
+        try {
+          const value = yield getValueFromStoredValue();
+          donationWidget.updateProps({ open: value });
+          return value;
+        } catch (error) {
+          console.error(error);
+        }
+      });
+    };
+    wthTwo();
     lines.subscribe((value) => __async(void 0, null, function* () {
       if (value) {
-        console.log("lines running", lines);
+        console.log("lines ran", lines);
         let filteredArray = [];
         lines.current.forEach((lineObj) => {
           if (lineObj.merchandise.title == "Carry On Foundation Donation") {
             filteredArray.push(lineObj);
           }
         });
-        console.log("filteredARray", filteredArray[0]);
-        console.log("selector.props.value", selector.props.value);
-        if (filteredArray[0].quantity > 2 && selector.props.value != filteredArray[0].quantity && selector.props.value != 0) {
-          const result2 = yield applyCartLinesChange({
-            type: "removeCartLine",
-            id: filteredArray[0].id,
-            // Needs reliable line item id number
-            quantity: filteredArray[0].quantity - selector.props.value
-          });
-          console.log("res2", result2);
+        console.log("filteredARray", filteredArray);
+        if (filteredArray.length > 1) {
+          console.log("linesIf running");
+          if (filteredArray[0] != filteredArray.lastItem) {
+            console.log("SECOND linesIf ran");
+            const result2 = yield applyCartLinesChange({
+              type: "removeCartLine",
+              id: filteredArray[0].id,
+              // Needs reliable line item id number
+              quantity: 1
+            });
+          }
         }
       }
     }));
@@ -740,17 +765,13 @@
           {
             toggles: "one",
             onPress: () => __async(void 0, null, function* () {
-              console.log("pressable", Pressable);
-              console.log("checkdrop", checkDrop);
               console.log("disclosure", donationWidget);
-              if (checkDrop.children[0].children[0].children[1].children[0].props.checked == "") {
+              if (donationWidget.props.open == "false" || donationWidget.props.open == "") {
                 console.log("yes the if statement is firing");
-                checkDrop.updateProps({ border: ["none", "none", "base", "none"] });
-                checkDrop.children[0].children[0].children[1].children[0].updateProps({ checked: "false" });
                 const result = yield applyCartLinesChange({
                   type: "addCartLine",
-                  merchandiseId: "gid://shopify/ProductVariant/45393245176115",
-                  quantity: 2
+                  merchandiseId: "gid://shopify/ProductVariant/46322811928883",
+                  quantity: 1
                 });
                 if (result.type === "error") {
                   console.error("error", result.message);
@@ -766,9 +787,7 @@
                     3e3
                   );
                 }
-              } else if (checkDrop.children[0].children[0].children[1].children[0].props.checked == "false") {
-                checkDrop.updateProps({ border: ["none", "none", "none", "none"] });
-                checkDrop.children[0].children[0].children[1].children[0].updateProps({ checked: "" });
+              } else if (donationWidget.props.open == "one") {
                 let filteredArrayOne = [];
                 lines.current.forEach((lineObj) => {
                   if (lineObj.merchandise.title == "Carry On Foundation Donation") {
@@ -814,7 +833,6 @@
         )
       ]
     );
-    console.log("checkDrop", checkDrop.children[0].children[0].children[1].children[0].props);
     const selector = root.createComponent(Select, {
       label: "Donation amount",
       value: 2,
@@ -883,83 +901,133 @@
                 InlineLayout,
                 {
                   columns: ["fill", "fill"],
-                  spacing: "none"
+                  spacing: "base"
                 },
                 [
                   root.createComponent(Button, {
                     kind: "primary",
-                    id: "Button2",
+                    accessibilityRole: "submit",
+                    id: "Button1",
                     // appearance: Style.when({hover: true}, 'accent'),
-                    onPress: () => {
-                      selector.updateProps({ value: 2 });
+                    onPress: () => __async(void 0, null, function* () {
+                      selector.updateProps({ value: 1 });
                       disclosureView.children[0].children[0].children[0].children[0].updateProps({ kind: "primary" });
                       disclosureView.children[0].children[0].children[0].children[1].updateProps({ kind: "secondary" });
                       disclosureView.children[0].children[0].children[0].children[2].updateProps({ kind: "secondary" });
-                    }
-                  }, "$2"),
+                      const result = yield applyCartLinesChange({
+                        type: "addCartLine",
+                        merchandiseId: "gid://shopify/ProductVariant/46322811928883",
+                        quantity: 1
+                      });
+                    })
+                  }, "$1"),
                   root.createComponent(Button, {
                     kind: "secondary",
+                    accessibilityRole: "submit",
                     id: "Button5",
-                    onPress: () => {
+                    onPress: () => __async(void 0, null, function* () {
                       selector.updateProps({ value: 5 });
                       disclosureView.children[0].children[0].children[0].children[0].updateProps({ kind: "secondary" });
                       disclosureView.children[0].children[0].children[0].children[1].updateProps({ kind: "primary" });
                       disclosureView.children[0].children[0].children[0].children[2].updateProps({ kind: "secondary" });
-                    }
+                      const result = yield applyCartLinesChange({
+                        type: "addCartLine",
+                        merchandiseId: "gid://shopify/ProductVariant/46322811961651",
+                        quantity: 1
+                      });
+                      let filteredArray = [];
+                      lines.current.forEach((lineObj) => {
+                        if (lineObj.merchandise.title == "Carry On Foundation Donation") {
+                          filteredArray.push(lineObj);
+                        }
+                      });
+                      const result2 = yield applyCartLinesChange({
+                        type: "removeCartLine",
+                        id: "gid://shopify/ProductVariant/46322811928883",
+                        // Needs reliable line item id number
+                        quantity: 1
+                      });
+                    })
                   }, "$5"),
                   root.createComponent(Button, {
                     kind: "secondary",
+                    accessibilityRole: "submit",
                     id: "Button10",
-                    onPress: () => {
+                    onPress: () => __async(void 0, null, function* () {
                       selector.updateProps({ value: 10 });
                       disclosureView.children[0].children[0].children[0].children[0].updateProps({ kind: "secondary" });
                       disclosureView.children[0].children[0].children[0].children[1].updateProps({ kind: "secondary" });
                       disclosureView.children[0].children[0].children[0].children[2].updateProps({ kind: "primary" });
-                    }
+                      const result = yield applyCartLinesChange({
+                        type: "addCartLine",
+                        merchandiseId: "gid://shopify/ProductVariant/46322811994419",
+                        quantity: 1
+                      });
+                      if (result.type === "error") {
+                        console.error("error", result.message);
+                        const errorComponent = root.createComponent(
+                          Banner,
+                          { status: "critical" },
+                          ["There was an issue adding this product. Please try again."]
+                        );
+                        const topLevelComponent = root.children[0];
+                        topLevelComponent.appendChild(errorComponent);
+                        setTimeout(
+                          () => topLevelComponent.removeChild(errorComponent),
+                          3e3
+                        );
+                      }
+                    })
                   }, "$10")
                 ]
               ),
-              root.createComponent(
-                InlineLayout,
-                {
-                  columns: ["fill", "auto"],
-                  spacing: "base"
-                },
-                [
-                  selector,
-                  root.createComponent(View, {}, [
-                    root.createComponent(
-                      Button,
-                      {
-                        accessibilityRole: "submit",
-                        kind: "primary",
-                        onPress: () => __async(void 0, null, function* () {
-                          const result = yield applyCartLinesChange({
-                            type: "addCartLine",
-                            merchandiseId: "gid://shopify/ProductVariant/45393245176115",
-                            quantity: parseInt(selector.props.value)
-                          });
-                          if (result.type === "error") {
-                            console.error("error", result.message);
-                            const errorComponent = root.createComponent(
-                              Banner,
-                              { status: "critical" },
-                              ["There was an issue adding this product. Please try again."]
-                            );
-                            const topLevelComponent = root.children[0];
-                            topLevelComponent.appendChild(errorComponent);
-                            setTimeout(
-                              () => topLevelComponent.removeChild(errorComponent),
-                              3e3
-                            );
-                          }
-                        })
-                      },
-                      "Update"
-                    )
-                  ])
-                ]
-              ),
+              // THIS BLOCK WILL BE REMOVED
+              // root.createComponent(
+              //     InlineLayout,
+              //     {
+              //     columns: ['fill', 'auto'],
+              //     spacing: 'base',
+              //     },
+              //     [
+              //         selector,
+              //         root.createComponent(View, {}, [
+              //             root.createComponent(
+              //             Button,
+              //             {
+              //                 accessibilityRole: 'submit',
+              //                 kind: 'primary',
+              //                 onPress: async () => {
+              //                         // Apply the cart lines change
+              //                         const result = await applyCartLinesChange({
+              //                             type: "addCartLine",
+              //                             merchandiseId: 'gid://shopify/ProductVariant/45393245176115',
+              //                             quantity: parseInt(selector.props.value),
+              //                         });
+              //                         if (result.type === "error") {
+              //                             // An error occurred adding the cart line
+              //                             // Verify that you're using a valid product variant ID
+              //                             // For example, 'gid://shopify/ProductVariant/123'
+              //                             console.error('error', result.message);
+              //                             const errorComponent = root.createComponent(
+              //                                 Banner,
+              //                                 { status: "critical" },
+              //                                 ["There was an issue adding this product. Please try again."]
+              //                             );
+              //                             // Render an error Banner as a child of the top-level app component for three seconds, then remove it
+              //                             const topLevelComponent = root.children[0];
+              //                             topLevelComponent.appendChild(errorComponent);
+              //                             setTimeout(
+              //                                 () => topLevelComponent.removeChild(errorComponent),
+              //                                 3000
+              //                             );
+              //                         }
+              //                 },
+              //             },
+              //             'Update',
+              //             ),
+              //         ]),
+              //     ],
+              // ),
               root.createComponent(
                 Text,
                 {
@@ -977,10 +1045,57 @@
       {
         open: "false",
         onToggle: (open) => {
-          if (donationWidget.props.open == "false") {
-            donationWidget.updateProps({ open: "one" });
+          if (donationWidget.props.open == "" || donationWidget.props.open == "false") {
+            console.log('disclosure is "" or false');
+            storage.write("whatTheH", "one");
+            function getValueFromStoredValue2() {
+              return __async(this, null, function* () {
+                try {
+                  const storedValue = storage.read("whatTheH");
+                  const value = yield storedValue;
+                  return value;
+                } catch (error) {
+                  throw error;
+                }
+              });
+            }
+            const wth = function someAsyncFunction() {
+              return __async(this, null, function* () {
+                try {
+                  const value = yield getValueFromStoredValue2();
+                  donationWidget.updateProps({ open: value });
+                  return value;
+                } catch (error) {
+                  console.error(error);
+                }
+              });
+            };
+            wth();
           } else {
-            donationWidget.updateProps({ open: "false" });
+            storage.write("whatTheH", "false");
+            function getValueFromStoredValue2() {
+              return __async(this, null, function* () {
+                try {
+                  const storedValue = storage.read("whatTheH");
+                  const value = yield storedValue;
+                  return value;
+                } catch (error) {
+                  throw error;
+                }
+              });
+            }
+            const wth = function someAsyncFunction() {
+              return __async(this, null, function* () {
+                try {
+                  const value = yield getValueFromStoredValue2();
+                  donationWidget.updateProps({ open: value });
+                  return value;
+                } catch (error) {
+                  console.error(error);
+                }
+              });
+            };
+            wth();
           }
         }
       },
