@@ -2,7 +2,7 @@
 
 name = "dev-app"
 client_id = "b7b4ad6bf46287cf8049270cad0a39a8"
-application_url = "https://effects-available-beliefs-across.trycloudflare.com"
+application_url = "https://invision-terror-helpful-motel.trycloudflare.com"
 embedded = true
 
 [access_scopes]
@@ -11,9 +11,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://effects-available-beliefs-across.trycloudflare.com/auth/callback",
-  "https://effects-available-beliefs-across.trycloudflare.com/auth/shopify/callback",
-  "https://effects-available-beliefs-across.trycloudflare.com/api/auth/callback"
+  "https://invision-terror-helpful-motel.trycloudflare.com/auth/callback",
+  "https://invision-terror-helpful-motel.trycloudflare.com/auth/shopify/callback",
+  "https://invision-terror-helpful-motel.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

@@ -700,29 +700,6 @@
 
   // extensions/donations-dev/src/Checkout.js
   var Checkout_default = extension("Checkout::Dynamic::Render", (root, { lines, applyCartLinesChange, storage }) => {
-    function getValueFromStoredValue() {
-      return __async(this, null, function* () {
-        try {
-          const storedValue = storage.read("dropValue");
-          const value = yield storedValue;
-          return value;
-        } catch (error) {
-          throw error;
-        }
-      });
-    }
-    const getValue = function someAsyncFunction() {
-      return __async(this, null, function* () {
-        try {
-          const value = yield getValueFromStoredValue();
-          donationWidget.updateProps({ open: value });
-          return value;
-        } catch (error) {
-          console.error(error);
-        }
-      });
-    };
-    getValue();
     lines.subscribe((value) => __async(void 0, null, function* () {
       if (value) {
         let filteredArray = [];
@@ -739,8 +716,46 @@
             quantity: 1
           });
         }
+        if (filteredArray.length == 1) {
+          if (filteredArray[0].merchandise.subtitle == "$1") {
+            disclosureView.children[0].children[0].children[0].children[0].updateProps({ kind: "primary" });
+            disclosureView.children[0].children[0].children[0].children[1].updateProps({ kind: "secondary" });
+            disclosureView.children[0].children[0].children[0].children[2].updateProps({ kind: "secondary" });
+          } else if (filteredArray[0].merchandise.subtitle == "$5") {
+            disclosureView.children[0].children[0].children[0].children[0].updateProps({ kind: "secondary" });
+            disclosureView.children[0].children[0].children[0].children[1].updateProps({ kind: "primary" });
+            disclosureView.children[0].children[0].children[0].children[2].updateProps({ kind: "secondary" });
+          } else if (filteredArray[0].merchandise.subtitle == "$10") {
+            disclosureView.children[0].children[0].children[0].children[0].updateProps({ kind: "secondary" });
+            disclosureView.children[0].children[0].children[0].children[1].updateProps({ kind: "secondary" });
+            disclosureView.children[0].children[0].children[0].children[2].updateProps({ kind: "primary" });
+          }
+        }
       }
     }));
+    function getValueFromStoredValue(key) {
+      return __async(this, null, function* () {
+        try {
+          const storedValue = storage.read(key);
+          const value = yield storedValue;
+          return value;
+        } catch (error) {
+          throw error;
+        }
+      });
+    }
+    function updateDropValue(key) {
+      return __async(this, null, function* () {
+        try {
+          const value = yield getValueFromStoredValue(key);
+          donationWidget.updateProps({ open: value });
+          return value;
+        } catch (error) {
+          console.error(error);
+        }
+      });
+    }
+    updateDropValue("dropValue");
     const checkDrop = root.createComponent(
       InlineLayout,
       {
@@ -757,13 +772,13 @@
             toggles: "one",
             onPress: () => __async(void 0, null, function* () {
               if (donationWidget.props.open == "false" || donationWidget.props.open == null) {
-                const result2 = yield applyCartLinesChange({
+                const result = yield applyCartLinesChange({
                   type: "addCartLine",
                   merchandiseId: "gid://shopify/ProductVariant/46322811928883",
                   quantity: 1
                 });
-                if (result2.type === "error") {
-                  console.error("error", result2.message);
+                if (result.type === "error") {
+                  console.error("error", result.message);
                   const errorComponent = root.createComponent(
                     Banner,
                     { status: "critical" },
@@ -785,13 +800,13 @@
                   }
                 });
                 filteredArrayOne.forEach((donation) => __async(void 0, null, function* () {
-                  const removeLines = yield applyCartLinesChange({
+                  const result = yield applyCartLinesChange({
                     type: "removeCartLine",
                     id: donation.id,
                     // Needs reliable line item id number
                     quantity: donation.quantity
                   });
-                  if (removeLines.type === "error") {
+                  if (result.type === "error") {
                     console.error("error", result.message);
                     const errorComponent = root.createComponent(
                       Banner,
@@ -827,7 +842,7 @@
                     border: ["none", "none", "none", "none"]
                   },
                   [
-                    root.createComponent(Text, { size: "base" }, "Show your support for the Carry On Foundation"),
+                    root.createComponent(Text, { size: "base" }, "Support Carry On\u2019s mission to teach resilience skills to youth through action sports and outdoor recreation."),
                     root.createComponent(Icon, { source: "chevronDown", size: "small" })
                   ]
                 )
@@ -877,11 +892,25 @@
                       if (filteredArray[0].merchandise.subtitle == "$1") {
                         return;
                       } else {
-                        const result2 = yield applyCartLinesChange({
+                        const result = yield applyCartLinesChange({
                           type: "addCartLine",
                           merchandiseId: "gid://shopify/ProductVariant/46322811928883",
                           quantity: 1
                         });
+                        if (result.type === "error") {
+                          console.error("error", result.message);
+                          const errorComponent = root.createComponent(
+                            Banner,
+                            { status: "critical" },
+                            ["There was an issue adding this product. Please try again."]
+                          );
+                          const topLevelComponent = root.children[0];
+                          topLevelComponent.appendChild(errorComponent);
+                          setTimeout(
+                            () => topLevelComponent.removeChild(errorComponent),
+                            3e3
+                          );
+                        }
                       }
                     })
                   }, "$1"),
@@ -902,11 +931,25 @@
                       if (filteredArray[0].merchandise.subtitle == "$5") {
                         return;
                       } else {
-                        const result2 = yield applyCartLinesChange({
+                        const result = yield applyCartLinesChange({
                           type: "addCartLine",
                           merchandiseId: "gid://shopify/ProductVariant/46322811961651",
                           quantity: 1
                         });
+                        if (result.type === "error") {
+                          console.error("error", result.message);
+                          const errorComponent = root.createComponent(
+                            Banner,
+                            { status: "critical" },
+                            ["There was an issue adding this product. Please try again."]
+                          );
+                          const topLevelComponent = root.children[0];
+                          topLevelComponent.appendChild(errorComponent);
+                          setTimeout(
+                            () => topLevelComponent.removeChild(errorComponent),
+                            3e3
+                          );
+                        }
                       }
                     })
                   }, "$5"),
@@ -927,13 +970,13 @@
                       if (filteredArray[0].merchandise.subtitle == "$10") {
                         return;
                       } else {
-                        const result2 = yield applyCartLinesChange({
+                        const result = yield applyCartLinesChange({
                           type: "addCartLine",
                           merchandiseId: "gid://shopify/ProductVariant/46322811994419",
                           quantity: 1
                         });
-                        if (result2.type === "error") {
-                          console.error("error", result2.message);
+                        if (result.type === "error") {
+                          console.error("error", result.message);
                           const errorComponent = root.createComponent(
                             Banner,
                             { status: "critical" },
@@ -956,7 +999,7 @@
                 {
                   size: "base"
                 },
-                "Our Mission: Teach youth resilience skills and promote mental health through action sports and outdoor recreation."
+                "Thank you for your contribution, every dollar counts! Carry On is a 501(C)(3) Nonprofit. EIN: 87-2350234"
               )
             ])
           ]
@@ -970,54 +1013,10 @@
         onToggle: (open) => {
           if (donationWidget.props.open == "false" || donationWidget.props.open == null) {
             storage.write("dropValue", "one");
-            function getValueFromStoredValue2() {
-              return __async(this, null, function* () {
-                try {
-                  const storedValue = storage.read("dropValue");
-                  const value = yield storedValue;
-                  return value;
-                } catch (error) {
-                  throw error;
-                }
-              });
-            }
-            const grabValue = function someAsyncFunction() {
-              return __async(this, null, function* () {
-                try {
-                  const value = yield getValueFromStoredValue2();
-                  donationWidget.updateProps({ open: value });
-                  return value;
-                } catch (error) {
-                  console.error(error);
-                }
-              });
-            };
-            grabValue();
+            updateDropValue("dropValue");
           } else {
             storage.write("dropValue", "false");
-            function getValueFromStoredValue2() {
-              return __async(this, null, function* () {
-                try {
-                  const storedValue = storage.read("dropValue");
-                  const value = yield storedValue;
-                  return value;
-                } catch (error) {
-                  throw error;
-                }
-              });
-            }
-            const grabbedValue = function someAsyncFunction() {
-              return __async(this, null, function* () {
-                try {
-                  const value = yield getValueFromStoredValue2();
-                  donationWidget.updateProps({ open: value });
-                  return value;
-                } catch (error) {
-                  console.error(error);
-                }
-              });
-            };
-            grabbedValue();
+            updateDropValue("dropValue");
           }
         }
       },
