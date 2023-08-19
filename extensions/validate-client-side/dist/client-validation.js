@@ -665,73 +665,77 @@
   // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/extension.mjs
   var extension = createExtensionRegistrationFunction();
 
-  // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/BlockStack/BlockStack.mjs
-  var BlockStack = createRemoteComponent("BlockStack");
-
-  // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/Checkbox/Checkbox.mjs
-  var Checkbox = createRemoteComponent("Checkbox");
-
   // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/TextField/TextField.mjs
   var TextField = createRemoteComponent("TextField");
 
-  // extensions/custom-field/src/Checkout.js
-  var Checkout_default = extension("purchase.checkout.shipping-option-list.render-after", (root, api) => {
+  // extensions/validate-client-side/src/Checkout.js
+  var Checkout_default = extension("purchase.checkout.contact.render-after", renderApp);
+  function renderApp(root, { extension: extension2, buyerJourney }) {
+    const ageTarget = 18;
     const state = {
-      metafields: api.metafields.current,
-      showDeliveryInstructions: false
+      age: "",
+      canBlockProgress: extension2.capabilities.current.includes("block_progress")
     };
-    renderUI({ root, api, state });
-    console.log("stateObj", state);
-    console.log("api-storefront I presume", api);
-    api.metafields.subscribe((newMetafields) => {
-      state.metafields = newMetafields;
-      renderUI({ root, api, state });
+    const textField = root.createComponent(TextField, {
+      label: "Your age",
+      type: "number",
+      value: state.age,
+      onChange: setAge,
+      onInput: clearValidationErrors,
+      required: state.canBlockProgress
     });
-  });
-  function renderUI({ root, api, state }) {
-    var _a;
-    const { applyMetafieldChange } = api;
-    console.log("so what is this api then?", api);
-    for (const child of root.children) {
-      root.removeChild(child);
-    }
-    const metafieldNamespace = "yourAppNamespace";
-    const metafieldKey = "deliveryInstructions";
-    const deliveryInstructions = (_a = state.metafields) == null ? void 0 : _a.find(
-      (field) => field.namespace === metafieldNamespace && field.key === metafieldKey
-    );
-    const app = root.createComponent(BlockStack, {}, [
-      root.createComponent(
-        Checkbox,
-        {
-          checked: state.showDeliveryInstructions,
-          onChange: () => {
-            state.showDeliveryInstructions = !state.showDeliveryInstructions;
-            renderUI({ root, api, state });
+    extension2.capabilities.subscribe((capabilities) => {
+      state.canBlockProgress = capabilities.includes("block_progress");
+      textField.updateProps({
+        label: state.canBlockProgress ? "Your age" : "Your age (optional)",
+        required: state.canBlockProgress
+      });
+    });
+    buyerJourney.intercept(({ canBlockProgress }) => {
+      if (canBlockProgress && !isAgeSet()) {
+        return {
+          behavior: "block",
+          reason: "Age is required",
+          perform: (result) => {
+            if (result.behavior === "block") {
+              textField.updateProps({ error: "Enter your age" });
+            }
           }
-        },
-        "Provide delivery instructions"
-      )
-    ]);
-    if (state.showDeliveryInstructions) {
-      app.appendChild(
-        root.createComponent(TextField, {
-          multiline: 3,
-          label: "Delivery instructions",
-          onChange: (value) => {
-            applyMetafieldChange({
-              type: "updateMetafield",
-              namespace: metafieldNamespace,
-              key: metafieldKey,
-              valueType: "string",
-              value
-            });
-            console.log("metafields updated");
-          },
-          value: deliveryInstructions == null ? void 0 : deliveryInstructions.value
-        })
-      );
+        };
+      }
+      if (canBlockProgress && !isAgeValid()) {
+        return {
+          behavior: "block",
+          reason: `Age is less than ${ageTarget}.`,
+          errors: [
+            {
+              // Show a validation error on the page
+              message: "You're not legally old enough to buy some of the items in your cart."
+            }
+          ]
+        };
+      }
+      return {
+        behavior: "allow",
+        perform: () => {
+          clearValidationErrors();
+        }
+      };
+    });
+    function setAge(value) {
+      state.age = value;
+      textField.updateProps({ value: state.age });
+      clearValidationErrors();
     }
-    root.appendChild(app);
+    function isAgeSet() {
+      return state.age !== "";
+    }
+    function isAgeValid() {
+      return Number(state.age) >= ageTarget;
+    }
+    function clearValidationErrors() {
+      textField.updateProps({ error: void 0 });
+    }
+    root.appendChild(textField);
   }
 })();

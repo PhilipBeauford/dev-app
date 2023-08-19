@@ -17,17 +17,25 @@ import {
 
 	// Render the initial extension UI
 	renderUI({ root, api, state });
+	
+	console.log('stateObj', state);
+	console.log('api-storefront I presume', api);
+
 
 	// Keep track if metafields change. If they do, then re-render.
 	api.metafields.subscribe((newMetafields) => {
 	  state.metafields = newMetafields;
 	  renderUI({ root, api, state });
 	});
+	
+	
   });
 
 
   function renderUI({ root, api, state }) {
 	const { applyMetafieldChange } = api;
+	
+	console.log('so what is this api then?', api);
   
 	// If this is a re-render, remove all previous children
 	for (const child of root.children) {
@@ -75,6 +83,8 @@ import {
 			  valueType: "string",
 			  value,
 			});
+			
+			console.log('metafields updated')
 		  },
 		  value: deliveryInstructions?.value,
 		})
