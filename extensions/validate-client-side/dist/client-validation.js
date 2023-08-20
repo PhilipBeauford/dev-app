@@ -669,8 +669,7 @@
   var TextField = createRemoteComponent("TextField");
 
   // extensions/validate-client-side/src/Checkout.js
-  var Checkout_default = extension("purchase.checkout.contact.render-after", renderApp);
-  function renderApp(root, { extension: extension2, buyerJourney }) {
+  var Checkout_default = extension("purchase.checkout.contact.render-after", (root, { extension: extension2, buyerJourney }) => {
     const ageTarget = 18;
     const state = {
       age: "",
@@ -684,6 +683,7 @@
       onInput: clearValidationErrors,
       required: state.canBlockProgress
     });
+    console.log("exte", extension2);
     extension2.capabilities.subscribe((capabilities) => {
       state.canBlockProgress = capabilities.includes("block_progress");
       textField.updateProps({
@@ -703,6 +703,7 @@
           }
         };
       }
+      console.log("canBlock", canBlockProgress);
       if (canBlockProgress && !isAgeValid()) {
         return {
           behavior: "block",
@@ -730,6 +731,7 @@
     function isAgeSet() {
       return state.age !== "";
     }
+    console.log("isAGeSet", isAgeSet());
     function isAgeValid() {
       return Number(state.age) >= ageTarget;
     }
@@ -737,5 +739,5 @@
       textField.updateProps({ error: void 0 });
     }
     root.appendChild(textField);
-  }
+  });
 })();
