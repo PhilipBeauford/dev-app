@@ -58,20 +58,11 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
         }
     });
 
-
-    async function getValueFromStoredValue(key) {
+    async function updateDropValue(key) {
         try {
           const storedValue = storage.read(key);
           const value = await storedValue;
-          return value; // Return the resolved value
-        } catch (error) {
-          throw error; // Re-throw the error if the Promise is rejected
-        }
-    }
 
-    async function updateDropValue(key) {
-        try {
-          const value = await getValueFromStoredValue(key);
           donationWidget.updateProps({open: value});
 
           return value; // Output: "false"

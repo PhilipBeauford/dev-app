@@ -18,9 +18,6 @@ export default extension("purchase.checkout.block.render", (root, { lines, apply
 	let appRendered = false;
 	let buttonPressed = false;
 
-	let upsellVar = settings.current.upsell_variant;
-
-
 	// Use the `query` API method to send graphql queries to the Storefront API
 	query(
 		`query getProductById($id: ID!) {
@@ -46,27 +43,20 @@ export default extension("purchase.checkout.block.render", (root, { lines, apply
 		variables: {id: "gid://shopify/Product/8127737168179"}, // Needs to be product ID
 		},
 	)
-	.then(({data}) => {
-		// Set the product variants
-		product = data.product;
-	})
-	.catch((err) => console.error(err))
-	.finally(() => {
-		loading = false;
-		// Call the `renderApp()` helper to filter, data-bind, and render the products on offer
-		renderApp();
-	});
+		.then(({data}) => {
+			// Set the product variants
+			product = data.product;
+		})
+		.catch((err) => console.error(err))
+		.finally(() => {
+			loading = false;
+			// Call the `renderApp()` helper to filter, data-bind, and render the products on offer
+			renderApp();
+		});
 
 
 	// Manually subscribe to changes to cart lines. This calls the `renderApp` helper function when the cart lines have changed
 	lines.subscribe(() => renderApp());
-
-	//When the merchant updates the banner title in the checkout editor, re-render the banner
-	settings.subscribe((newSettings) => {
-		
-		upsellVar = newSettings.current.upsell_variant;
-		renderApp();
-	});
 
 
 	// Show a loading UI if you're waiting for product variant data
@@ -123,44 +113,43 @@ export default extension("purchase.checkout.block.render", (root, { lines, apply
 	// Defines the "Add" Button component used in the app
 	const addButtonComponent = root.createComponent(
 		Button,
-		// @ts-ignore
+		//@ts-ignore
 		{
-			border: "base",
-			kind: "primary",
-			appearance: "interactive",
-			loading: false,
-			onPress: async () => {
-				addButtonComponent.updateProps({ loading: true });
-				buttonPressed = true;
+		kind: "primary",
+		appearance: "interactive",
+		loading: false,
+		onPress: async () => {
+			addButtonComponent.updateProps({ loading: true });
+			buttonPressed = true;
 
-				// Apply the cart lines change
-				const result = await applyCartLinesChange({
-					type: "addCartLine",
-					merchandiseId: upsellVar, // Needs to be product variant ID
-					quantity: 1,
-				});
+			// Apply the cart lines change
+			const result = await applyCartLinesChange({
+				type: "addCartLine",
+				merchandiseId: "gid://shopify/ProductVariant/43254313123978", // Needs to be product variant ID
+				quantity: 1,
+			});
 
-				addButtonComponent.updateProps({ loading: false });
+			addButtonComponent.updateProps({ loading: false });
 
-				if (result.type === "error") {
-					// An error occurred adding the cart line
-					// Verify that you're using a valid product variant ID
-					// For example, 'gid://shopify/ProductVariant/123'
-					console.error(result.message);
-					const errorComponent = root.createComponent(
-						Banner,
-						{ status: "critical" },
-						["There was an issue adding this product. Please try again."]
-					);
-					// Render an error Banner as a child of the top-level app component for three seconds, then remove it
-					const topLevelComponent = root.children[0];
-					topLevelComponent.appendChild(errorComponent);
-					setTimeout(
-						() => topLevelComponent.removeChild(errorComponent),
-						3000
-					);
-				}
-			},
+			if (result.type === "error") {
+				// An error occurred adding the cart line
+				// Verify that you're using a valid product variant ID
+				// For example, 'gid://shopify/ProductVariant/123'
+				console.error(result.message);
+				const errorComponent = root.createComponent(
+					Banner,
+					{ status: "critical" },
+					["There was an issue adding this product. Please try again."]
+				);
+				// Render an error Banner as a child of the top-level app component for three seconds, then remove it
+				const topLevelComponent = root.children[0];
+				topLevelComponent.appendChild(errorComponent);
+				setTimeout(
+					() => topLevelComponent.removeChild(errorComponent),
+					3000
+				);
+			}
+		},
 		},
 		["Add"]
 	);

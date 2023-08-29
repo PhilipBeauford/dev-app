@@ -733,21 +733,11 @@
         }
       }
     }));
-    function getValueFromStoredValue(key) {
+    function updateDropValue(key) {
       return __async(this, null, function* () {
         try {
           const storedValue = storage.read(key);
           const value = yield storedValue;
-          return value;
-        } catch (error) {
-          throw error;
-        }
-      });
-    }
-    function updateDropValue(key) {
-      return __async(this, null, function* () {
-        try {
-          const value = yield getValueFromStoredValue(key);
           donationWidget.updateProps({ open: value });
           return value;
         } catch (error) {
