@@ -772,26 +772,11 @@
             toggles: "one",
             onPress: () => __async(void 0, null, function* () {
               if (donationWidget.props.open == "false" || donationWidget.props.open == null) {
-                const result = yield applyCartLinesChange({
-                  type: "addCartLine",
-                  merchandiseId: "gid://shopify/ProductVariant/46322811928883",
-                  quantity: 1
-                });
-                if (result.type === "error") {
-                  console.error("error", result.message);
-                  const errorComponent = root.createComponent(
-                    Banner,
-                    { status: "critical" },
-                    ["There was an issue adding this product. Please try again."]
-                  );
-                  const topLevelComponent = root.children[0];
-                  topLevelComponent.appendChild(errorComponent);
-                  setTimeout(
-                    () => topLevelComponent.removeChild(errorComponent),
-                    3e3
-                  );
-                }
+                return;
               } else if (donationWidget.props.open == "one") {
+                disclosureView.children[0].children[0].children[0].children[0].updateProps({ kind: "secondary" });
+                disclosureView.children[0].children[0].children[0].children[1].updateProps({ kind: "secondary" });
+                disclosureView.children[0].children[0].children[0].children[2].updateProps({ kind: "secondary" });
                 storage.delete("dropValue");
                 let filteredArrayOne = [];
                 lines.current.forEach((lineObj) => {
@@ -875,7 +860,7 @@
                 },
                 [
                   root.createComponent(Button, {
-                    kind: "primary",
+                    kind: "secondary",
                     accessibilityRole: "submit",
                     id: "Button1",
                     onPress: () => __async(void 0, null, function* () {
@@ -888,9 +873,7 @@
                           filteredArray.push(lineObj);
                         }
                       });
-                      if (filteredArray[0].merchandise.subtitle == "$1") {
-                        return;
-                      } else {
+                      if (filteredArray.length == 0) {
                         const result = yield applyCartLinesChange({
                           type: "addCartLine",
                           merchandiseId: "gid://shopify/ProductVariant/46322811928883",
@@ -910,6 +893,30 @@
                             3e3
                           );
                         }
+                      } else {
+                        if (filteredArray[0].merchandise.subtitle == "$1") {
+                          return;
+                        } else {
+                          const result = yield applyCartLinesChange({
+                            type: "addCartLine",
+                            merchandiseId: "gid://shopify/ProductVariant/46322811928883",
+                            quantity: 1
+                          });
+                          if (result.type === "error") {
+                            console.error("error", result.message);
+                            const errorComponent = root.createComponent(
+                              Banner,
+                              { status: "critical" },
+                              ["There was an issue adding this product. Please try again."]
+                            );
+                            const topLevelComponent = root.children[0];
+                            topLevelComponent.appendChild(errorComponent);
+                            setTimeout(
+                              () => topLevelComponent.removeChild(errorComponent),
+                              3e3
+                            );
+                          }
+                        }
                       }
                     })
                   }, "$1"),
@@ -927,9 +934,7 @@
                           filteredArray.push(lineObj);
                         }
                       });
-                      if (filteredArray[0].merchandise.subtitle == "$5") {
-                        return;
-                      } else {
+                      if (filteredArray.length == 0) {
                         const result = yield applyCartLinesChange({
                           type: "addCartLine",
                           merchandiseId: "gid://shopify/ProductVariant/46322811961651",
@@ -949,6 +954,30 @@
                             3e3
                           );
                         }
+                      } else {
+                        if (filteredArray[0].merchandise.subtitle == "$5") {
+                          return;
+                        } else {
+                          const result = yield applyCartLinesChange({
+                            type: "addCartLine",
+                            merchandiseId: "gid://shopify/ProductVariant/46322811961651",
+                            quantity: 1
+                          });
+                          if (result.type === "error") {
+                            console.error("error", result.message);
+                            const errorComponent = root.createComponent(
+                              Banner,
+                              { status: "critical" },
+                              ["There was an issue adding this product. Please try again."]
+                            );
+                            const topLevelComponent = root.children[0];
+                            topLevelComponent.appendChild(errorComponent);
+                            setTimeout(
+                              () => topLevelComponent.removeChild(errorComponent),
+                              3e3
+                            );
+                          }
+                        }
                       }
                     })
                   }, "$5"),
@@ -966,9 +995,7 @@
                           filteredArray.push(lineObj);
                         }
                       });
-                      if (filteredArray[0].merchandise.subtitle == "$10") {
-                        return;
-                      } else {
+                      if (filteredArray.length == 0) {
                         const result = yield applyCartLinesChange({
                           type: "addCartLine",
                           merchandiseId: "gid://shopify/ProductVariant/46322811994419",
@@ -988,6 +1015,30 @@
                             3e3
                           );
                         }
+                      } else {
+                        if (filteredArray[0].merchandise.subtitle == "$10") {
+                          return;
+                        } else {
+                          const result = yield applyCartLinesChange({
+                            type: "addCartLine",
+                            merchandiseId: "gid://shopify/ProductVariant/46322811994419",
+                            quantity: 1
+                          });
+                          if (result.type === "error") {
+                            console.error("error", result.message);
+                            const errorComponent = root.createComponent(
+                              Banner,
+                              { status: "critical" },
+                              ["There was an issue adding this product. Please try again."]
+                            );
+                            const topLevelComponent = root.children[0];
+                            topLevelComponent.appendChild(errorComponent);
+                            setTimeout(
+                              () => topLevelComponent.removeChild(errorComponent),
+                              3e3
+                            );
+                          }
+                        }
                       }
                     })
                   }, "$10")
@@ -997,6 +1048,9 @@
                 kind: "secondary",
                 id: "RemoveDonation",
                 onPress: () => __async(void 0, null, function* () {
+                  disclosureView.children[0].children[0].children[0].children[0].updateProps({ kind: "secondary" });
+                  disclosureView.children[0].children[0].children[0].children[1].updateProps({ kind: "secondary" });
+                  disclosureView.children[0].children[0].children[0].children[2].updateProps({ kind: "secondary" });
                   if (donationWidget.props.open == "one") {
                     donationWidget.updateProps({ open: "false" });
                     storage.delete("dropValue");

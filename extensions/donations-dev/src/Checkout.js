@@ -37,7 +37,7 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
                     id: filteredArray[0].id, // Needs reliable line item id number
                     quantity: 1,
                 });
-            } 
+            }
 
             // Update buttons status
             if(filteredArray.length == 1) {
@@ -102,33 +102,12 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
                         // If dropdown is not open, activate dropdown & auto-add $1 to cart
                         if( donationWidget.props.open == "false" || donationWidget.props.open == null ) {
 
-                            // Auto add to cart $1 donation
-                            const result = await applyCartLinesChange({
-                                type: "addCartLine",
-                                merchandiseId: 'gid://shopify/ProductVariant/46322811928883',
-                                quantity: 1,
-                            });
-
-                            if (result.type === "error") {
-                            // An error occurred adding the cart line
-                            // Verify that you're using a valid product variant ID
-                            // For example, 'gid://shopify/ProductVariant/123'
-                            console.error('error', result.message);
-                            const errorComponent = root.createComponent(
-                                Banner,
-                                { status: "critical" },
-                                ["There was an issue adding this product. Please try again."]
-                            );
-                            // Render an error Banner as a child of the top-level app component for three seconds, then remove it
-                            const topLevelComponent = root.children[0];
-                            topLevelComponent.appendChild(errorComponent);
-                            setTimeout(
-                                () => topLevelComponent.removeChild(errorComponent),
-                                3000
-                            );
-                            }
+                            return;
 
                         } else if(donationWidget.props.open == 'one') {
+                            disclosureView.children[0].children[0].children[0].children[0].updateProps({kind: 'secondary'})
+                            disclosureView.children[0].children[0].children[0].children[1].updateProps({kind: 'secondary'})
+                            disclosureView.children[0].children[0].children[0].children[2].updateProps({kind: 'secondary'})
 
                             storage.delete('dropValue')
                             let filteredArrayOne = [];
@@ -223,7 +202,7 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
                     },
                     [
                         root.createComponent(Button, {
-                            kind: 'primary',
+                            kind: 'secondary',
                             accessibilityRole: 'submit',
                             id: 'Button1',
                             onPress: async () => {
@@ -240,17 +219,14 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
                                     }
                                 })
 
-                                if(filteredArray[0].merchandise.subtitle == '$1' ) {
-                                    return
-                                } else {
-
+                                if(filteredArray.length == 0 ) {
                                     // Apply the cart lines change
                                     const result = await applyCartLinesChange({
                                         type: "addCartLine",
                                         merchandiseId: 'gid://shopify/ProductVariant/46322811928883',
                                         quantity: 1,
                                     });
-                                    
+
                                     if (result.type === "error") {
 
                                         // An error occurred adding the cart line
@@ -269,6 +245,38 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
                                             () => topLevelComponent.removeChild(errorComponent),
                                             3000
                                         );
+                                    }
+                                } else {
+
+                                    if(filteredArray[0].merchandise.subtitle == '$1' ) {
+                                        return
+                                    } else {
+                                        // Apply the cart lines change
+                                        const result = await applyCartLinesChange({
+                                            type: "addCartLine",
+                                            merchandiseId: 'gid://shopify/ProductVariant/46322811928883',
+                                            quantity: 1,
+                                        });
+
+                                        if (result.type === "error") {
+    
+                                            // An error occurred adding the cart line
+                                            // Verify that you're using a valid product variant ID
+                                            // For example, 'gid://shopify/ProductVariant/123'
+                                            console.error('error', result.message);
+                                            const errorComponent = root.createComponent(
+                                                Banner,
+                                                { status: "critical" },
+                                                ["There was an issue adding this product. Please try again."]
+                                            );
+                                            // Render an error Banner as a child of the top-level app component for three seconds, then remove it
+                                            const topLevelComponent = root.children[0];
+                                            topLevelComponent.appendChild(errorComponent);
+                                            setTimeout(
+                                                () => topLevelComponent.removeChild(errorComponent),
+                                                3000
+                                            );
+                                        }
                                     }
                                 }
                             }
@@ -292,19 +300,15 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
                                     }
                                 })
 
-                                if(filteredArray[0].merchandise.subtitle == '$5' ) {
-                                    return
-                                } else {
-
+                                if(filteredArray.length == 0){
                                     // Apply the cart lines change
                                     const result = await applyCartLinesChange({
                                         type: "addCartLine",
                                         merchandiseId: 'gid://shopify/ProductVariant/46322811961651',
                                         quantity: 1,
                                     });
-                                    
-                                    if (result.type === "error") {
 
+                                    if (result.type === "error") {
                                         // An error occurred adding the cart line
                                         // Verify that you're using a valid product variant ID
                                         // For example, 'gid://shopify/ProductVariant/123'
@@ -321,6 +325,37 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
                                             () => topLevelComponent.removeChild(errorComponent),
                                             3000
                                         );
+                                    }
+                                } else {
+
+                                    if(filteredArray[0].merchandise.subtitle == '$5' ) {
+                                        return
+                                    } else {
+                                        // Apply the cart lines change
+                                        const result = await applyCartLinesChange({
+                                            type: "addCartLine",
+                                            merchandiseId: 'gid://shopify/ProductVariant/46322811961651',
+                                            quantity: 1,
+                                        });
+
+                                        if (result.type === "error") {
+                                            // An error occurred adding the cart line
+                                            // Verify that you're using a valid product variant ID
+                                            // For example, 'gid://shopify/ProductVariant/123'
+                                            console.error('error', result.message);
+                                            const errorComponent = root.createComponent(
+                                                Banner,
+                                                { status: "critical" },
+                                                ["There was an issue adding this product. Please try again."]
+                                            );
+                                            // Render an error Banner as a child of the top-level app component for three seconds, then remove it
+                                            const topLevelComponent = root.children[0];
+                                            topLevelComponent.appendChild(errorComponent);
+                                            setTimeout(
+                                                () => topLevelComponent.removeChild(errorComponent),
+                                                3000
+                                            );
+                                        }
                                     }
                                 }
                             }
@@ -343,11 +378,8 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
                                         filteredArray.push(lineObj);
                                     }
                                 })
-
-                                if(filteredArray[0].merchandise.subtitle == '$10' ) {
-                                    return
-                                } else {
-
+                                
+                                if(filteredArray.length == 0) {
                                     // Apply the cart lines change
                                     const result = await applyCartLinesChange({
                                         type: "addCartLine",
@@ -356,7 +388,6 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
                                     });
 
                                     if (result.type === "error") {
-
                                         // An error occurred adding the cart line
                                         // Verify that you're using a valid product variant ID
                                         // For example, 'gid://shopify/ProductVariant/123'
@@ -374,63 +405,96 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
                                             3000
                                         );
                                     }
+                                } else {
+                                    if(filteredArray[0].merchandise.subtitle == '$10' ) {
+                                        return
+                                    } else {
+                                        // Apply the cart lines change
+                                        const result = await applyCartLinesChange({
+                                            type: "addCartLine",
+                                            merchandiseId: 'gid://shopify/ProductVariant/46322811994419',
+                                            quantity: 1,
+                                        });
+
+                                        if (result.type === "error") {
+                                            // An error occurred adding the cart line
+                                            // Verify that you're using a valid product variant ID
+                                            // For example, 'gid://shopify/ProductVariant/123'
+                                            console.error('error', result.message);
+                                            const errorComponent = root.createComponent(
+                                                Banner,
+                                                { status: "critical" },
+                                                ["There was an issue adding this product. Please try again."]
+                                            );
+                                            // Render an error Banner as a child of the top-level app component for three seconds, then remove it
+                                            const topLevelComponent = root.children[0];
+                                            topLevelComponent.appendChild(errorComponent);
+                                            setTimeout(
+                                                () => topLevelComponent.removeChild(errorComponent),
+                                                3000
+                                            );
+                                        }
+                                    }
                                 }
                             }
                         }, '$10'),
                     ],
                 ),
-				
-				
-				root.createComponent(Button, {
-					kind: 'secondary',
-					id: 'RemoveDonation',
-					onPress: async () => {
-						
-						if(donationWidget.props.open == 'one') {
-							
-							donationWidget.updateProps({open: 'false'});
 
-							storage.delete('dropValue')
-							let removalArray = [];
+                root.createComponent(Button, {
+                    kind: 'secondary',
+                    id: 'RemoveDonation',
+                    onPress: async () => {
+                        
+                        disclosureView.children[0].children[0].children[0].children[0].updateProps({kind: 'secondary'})
+                        disclosureView.children[0].children[0].children[0].children[1].updateProps({kind: 'secondary'})
+                        disclosureView.children[0].children[0].children[0].children[2].updateProps({kind: 'secondary'})
+                        
+                        
+                        if(donationWidget.props.open == 'one') {
+                            
+                            donationWidget.updateProps({open: 'false'});
 
-							// Grab lines objects only if title matches
-							lines.current.forEach(lineObj => {
-								if(lineObj.merchandise.title == 'Carry On Foundation Donation') {
-									removalArray.push(lineObj);
-								}
-							})
+                            storage.delete('dropValue')
+                            let removalArray = [];
 
-							//Remove added donations/cart lines
-							removalArray.forEach(async donation => {
-								const result = await applyCartLinesChange({
-									type: "removeCartLine",
-									id: donation.id, // Needs reliable line item id number
-									quantity: donation.quantity,
-								});
+                            // Grab lines objects only if title matches
+                            lines.current.forEach(lineObj => {
+                                if(lineObj.merchandise.title == 'Carry On Foundation Donation') {
+                                    removalArray.push(lineObj);
+                                }
+                            })
 
-								if (result.type === "error") {
-									// An error occurred adding the cart line
-									// Verify that you're using a valid product variant ID
-									// For example, 'gid://shopify/ProductVariant/123'
-									console.error('error', result.message);
-									const errorComponent = root.createComponent(
-										Banner,
-										{ status: "critical" },
-										["There was an issue adding this product. Please try again."]
-									);
-									// Render an error Banner as a child of the top-level app component for three seconds, then remove it
-									const topLevelComponent = root.children[0];
-									topLevelComponent.appendChild(errorComponent);
-									setTimeout(
-										() => topLevelComponent.removeChild(errorComponent),
-										3000
-									);
-									}
-							})
-						}
-					}
-				}, 'Remove Donation'),
-				
+                            //Remove added donations/cart lines
+                            removalArray.forEach(async donation => {
+                                const result = await applyCartLinesChange({
+                                    type: "removeCartLine",
+                                    id: donation.id, // Needs reliable line item id number
+                                    quantity: donation.quantity,
+                                });
+
+                                if (result.type === "error") {
+                                    // An error occurred adding the cart line
+                                    // Verify that you're using a valid product variant ID
+                                    // For example, 'gid://shopify/ProductVariant/123'
+                                    console.error('error', result.message);
+                                    const errorComponent = root.createComponent(
+                                        Banner,
+                                        { status: "critical" },
+                                        ["There was an issue adding this product. Please try again."]
+                                    );
+                                    // Render an error Banner as a child of the top-level app component for three seconds, then remove it
+                                    const topLevelComponent = root.children[0];
+                                    topLevelComponent.appendChild(errorComponent);
+                                    setTimeout(
+                                        () => topLevelComponent.removeChild(errorComponent),
+                                        3000
+                                    );
+                                    }
+                            })
+                        }
+                    }
+                }, 'Remove Donation'),
 
                 root.createComponent(
                     Text,
