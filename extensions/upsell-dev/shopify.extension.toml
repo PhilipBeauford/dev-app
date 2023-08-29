@@ -1,0 +1,32 @@
+api_version = "2023-07"
+
+[[extensions]]
+type = "ui_extension"
+name = "Upsell dev"
+handle = "upsell-dev"
+
+[[extensions.targeting]]
+module = "./src/Checkout.js"
+target = "purchase.checkout.block.render"
+
+[extensions.capabilities]
+api_access = true
+network_access = true
+
+
+[extensions.settings]
+
+[[extensions.settings.fields]]
+key = "upsell_variant"
+type = "variant_reference"
+name = "Upsell product variant"
+description = "Choose a variant for the upsell"
+
+
+
+# [[extensions.metafields]]
+# namespace = "my_namespace"
+# key = "my_key"
+# [[extensions.metafields]]
+# namespace = "my_namespace"
+# key = "my_other_key"
