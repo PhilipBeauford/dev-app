@@ -695,28 +695,26 @@
     let loading = true;
     let appRendered = false;
     let buttonPressed = false;
-    console.log("settingsObj", settings);
-    let upsellVar = settings.current.upsell_variant;
     query(
       `query getProductById($id: ID!) {
-		product(id: $id) {
-		title
-		id
-		images(first:1){
-			nodes {
-			url
-			}
-		}
-		variants(first:1){
-			nodes {
+			product(id: $id) {
+			title
 			id
-			price {
-				amount
+			images(first:1){
+				nodes {
+				url
+				}
+			}
+			variants(first:1){
+				nodes {
+				id
+				price {
+					amount
+				}
+				}
 			}
 			}
-		}
-		}
-	}`,
+		}`,
       {
         variables: { id: "gid://shopify/Product/8127737168179" }
         // Needs to be product ID
@@ -728,10 +726,6 @@
       renderApp();
     });
     lines.subscribe(() => renderApp());
-    settings.subscribe((newSettings) => {
-      upsellVar = newSettings.current.upsell_variant;
-      renderApp();
-    });
     const loadingState = root.createComponent(
       BlockStack,
       { spacing: "loose" },
@@ -776,7 +770,7 @@
     const priceMarkup = root.createText("");
     const addButtonComponent = root.createComponent(
       Button,
-      // @ts-ignore
+      //@ts-ignore
       {
         kind: "primary",
         appearance: "interactive",
@@ -784,10 +778,9 @@
         onPress: () => __async(void 0, null, function* () {
           addButtonComponent.updateProps({ loading: true });
           buttonPressed = true;
-          console.log("variant?", settings.current.upsell_variant);
           const result = yield applyCartLinesChange({
             type: "addCartLine",
-            merchandiseId: upsellVar,
+            merchandiseId: "gid://shopify/ProductVariant/43254313123978",
             // Needs to be product variant ID
             quantity: 1
           });
