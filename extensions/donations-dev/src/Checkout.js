@@ -39,7 +39,7 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
                 });
             }
 
-            // Update buttons status
+            // Update buttons status step
             if(filteredArray.length == 1) {
                 if(filteredArray[0].merchandise.subtitle == '$1') {
                     disclosureView.children[0].children[0].children[0].children[0].updateProps({kind: 'primary'})
