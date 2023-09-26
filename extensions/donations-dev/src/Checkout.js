@@ -58,7 +58,7 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
         }
     });
 
-    async function updateDropValue(key) {
+    async function updateDropValue(key) { 
         try {
           const storedValue = storage.read(key);
           const value = await storedValue;
