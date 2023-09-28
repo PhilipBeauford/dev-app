@@ -62,7 +62,7 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
         try {
           const storedValue = storage.read(key);
           const value = await storedValue;
-
+ 
           donationWidget.updateProps({open: value}); 
 
           return value; // Output: "false"
