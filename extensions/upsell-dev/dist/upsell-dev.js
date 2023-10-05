@@ -695,6 +695,7 @@
     let loading = true;
     let appRendered = false;
     let buttonPressed = false;
+    console.log("settings", settings.current);
     query(
       `query getProductById($id: ID!) {
 			product(id: $id) {
@@ -780,7 +781,7 @@
           buttonPressed = true;
           const result = yield applyCartLinesChange({
             type: "addCartLine",
-            merchandiseId: "gid://shopify/ProductVariant/43254313123978",
+            merchandiseId: "gid://shopify/ProductVariant/44462991606067",
             // Needs to be product variant ID
             quantity: 1
           });

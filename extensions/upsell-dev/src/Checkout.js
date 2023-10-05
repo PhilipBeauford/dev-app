@@ -17,6 +17,8 @@ export default extension("purchase.checkout.block.render", (root, { lines, apply
 	let loading = true;
 	let appRendered = false;
 	let buttonPressed = false;
+	
+	console.log('settings', settings.current); 
 
 	// Use the `query` API method to send graphql queries to the Storefront API
 	query(
@@ -125,7 +127,7 @@ export default extension("purchase.checkout.block.render", (root, { lines, apply
 			// Apply the cart lines change
 			const result = await applyCartLinesChange({
 				type: "addCartLine",
-				merchandiseId: "gid://shopify/ProductVariant/43254313123978", // Needs to be product variant ID
+				merchandiseId: "gid://shopify/ProductVariant/44462991606067", // Needs to be product variant ID
 				quantity: 1,
 			});
 
