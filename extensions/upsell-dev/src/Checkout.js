@@ -17,13 +17,13 @@ export default extension("purchase.checkout.block.render", (root, { lines, apply
 	let loading = true;
 	let appRendered = false;
 	let buttonPressed = false;
-	
+
+	// When the merchant updates the product variant ID in the checkout editor, update that ID
 	settings.subscribe((newSettings) => {
-		console.log('new settings', newSettings.current); 
 
 	});
-	
-		console.log('settings', settings.current); 
+
+	const productId = settings.current.product_id ?? "8127737168179";
 
 	// Use the `query` API method to send graphql queries to the Storefront API
 	query(
@@ -47,7 +47,7 @@ export default extension("purchase.checkout.block.render", (root, { lines, apply
 			}
 		}`,
 		{
-		variables: {id: "gid://shopify/Product/8127737168179"}, // Needs to be product ID
+		variables: {id: "gid://shopify/Product/" + productId}, // Needs to be product ID
 		},
 	)
 		.then(({data}) => {
@@ -99,6 +99,7 @@ export default extension("purchase.checkout.block.render", (root, { lines, apply
 		]
 	);
 
+
 	// Render the loading state
 	if (loading) {
 		root.appendChild(loadingState);
@@ -117,13 +118,13 @@ export default extension("purchase.checkout.block.render", (root, { lines, apply
 	const titleMarkup = root.createText("");
 	const priceMarkup = root.createText("");
 
+
 	// Defines the "Add" Button component used in the app
 	const addButtonComponent = root.createComponent(
 		Button,
 		//@ts-ignore
 		{
 		kind: "primary",
-		appearance: "interactive",
 		loading: false,
 		onPress: async () => {
 			addButtonComponent.updateProps({ loading: true });
@@ -132,7 +133,7 @@ export default extension("purchase.checkout.block.render", (root, { lines, apply
 			// Apply the cart lines change
 			const result = await applyCartLinesChange({
 				type: "addCartLine",
-				merchandiseId: "gid://shopify/ProductVariant/44462991606067", // Needs to be product variant ID
+				merchandiseId: product.variants.nodes[0].id ?? "gid://shopify/ProductVariant/44462991606067", // Needs to be product variant ID
 				quantity: 1,
 			});
 
@@ -196,7 +197,6 @@ export default extension("purchase.checkout.block.render", (root, { lines, apply
 		),
 		]),
 	]);
-
 
 	// This function will be called once the product variants are initially loaded or the cart lines have changed
 	function renderApp() {
