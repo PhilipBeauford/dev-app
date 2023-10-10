@@ -695,6 +695,9 @@
     let loading = true;
     let appRendered = false;
     let buttonPressed = false;
+    settings.subscribe((newSettings) => {
+      console.log("new settings", newSettings.current);
+    });
     console.log("settings", settings.current);
     query(
       `query getProductById($id: ID!) {

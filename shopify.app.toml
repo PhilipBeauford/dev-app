@@ -2,7 +2,7 @@
 
 name = "dev-app"
 client_id = "b7b4ad6bf46287cf8049270cad0a39a8"
-application_url = "https://museum-challenging-mhz-hence.trycloudflare.com"
+application_url = "https://suspension-foul-th-weddings.trycloudflare.com"
 embedded = true
 
 [access_scopes]
@@ -11,9 +11,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://museum-challenging-mhz-hence.trycloudflare.com/auth/callback",
-  "https://museum-challenging-mhz-hence.trycloudflare.com/auth/shopify/callback",
-  "https://museum-challenging-mhz-hence.trycloudflare.com/api/auth/callback"
+  "https://suspension-foul-th-weddings.trycloudflare.com/auth/callback",
+  "https://suspension-foul-th-weddings.trycloudflare.com/auth/shopify/callback",
+  "https://suspension-foul-th-weddings.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

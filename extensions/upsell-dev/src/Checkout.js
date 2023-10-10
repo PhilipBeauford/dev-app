@@ -18,7 +18,12 @@ export default extension("purchase.checkout.block.render", (root, { lines, apply
 	let appRendered = false;
 	let buttonPressed = false;
 	
-	console.log('settings', settings.current); 
+	settings.subscribe((newSettings) => {
+		console.log('new settings', newSettings.current); 
+
+	});
+	
+		console.log('settings', settings.current); 
 
 	// Use the `query` API method to send graphql queries to the Storefront API
 	query(
