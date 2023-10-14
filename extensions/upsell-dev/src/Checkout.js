@@ -229,7 +229,7 @@ export default extension("purchase.checkout.block.render", (root, { lines, apply
 
 		// Prevent against unnecessary re-renders
 		if (!appRendered) {
-			root.removeChild(loadingState);// Remove the loading state
+			root.removeChild(loadingState);// Remove the loading state 
 			root.appendChild(app);// Render the product offer app with the product data
 			appRendered = true;
 		}
