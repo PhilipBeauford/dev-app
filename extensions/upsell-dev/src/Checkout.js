@@ -195,7 +195,7 @@ export default extension("purchase.checkout.block.render", (root, { lines, apply
 			addButtonComponent,
 			]
 		),
-		]),
+		]), 
 	]);
 
 	// This function will be called once the product variants are initially loaded or the cart lines have changed
