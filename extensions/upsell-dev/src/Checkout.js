@@ -39,7 +39,7 @@ export default extension("purchase.checkout.block.render", (root, { lines, apply
 			variants(first:1){
 				nodes {
 				id
-				price { 
+				price {
 					amount
 				}
 				}
