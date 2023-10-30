@@ -33,7 +33,7 @@ export default extension("purchase.checkout.block.render", (root, { lines, apply
 			id
 			images(first:1){
 				nodes {
-				url
+				url 
 				}
 			}
 			variants(first:1){
