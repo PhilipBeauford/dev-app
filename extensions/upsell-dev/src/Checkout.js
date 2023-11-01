@@ -52,7 +52,7 @@ export default extension("purchase.checkout.block.render", (root, { lines, apply
 	)
 		.then(({data}) => {
 			// Set the product variants
-			product = data.product;
+			product = data.product; 
 		})
 		.catch((err) => console.error(err))
 		.finally(() => {
