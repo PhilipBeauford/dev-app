@@ -24,7 +24,7 @@ function getConfig() {
         if(!fs.existsSync(schema)) {
             continue;
         }
-        config.projects[entry] = {
+        config.projects[entry] = { 
             schema,
             documents: [`${extensionPath}/input.graphql`]
         }
