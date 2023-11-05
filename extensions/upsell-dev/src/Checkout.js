@@ -121,7 +121,7 @@ export default extension("purchase.checkout.block.render", (root, { lines, apply
 
 	// Defines the "Add" Button component used in the app
 	const addButtonComponent = root.createComponent(
-		Button,
+		Button, 
 		//@ts-ignore
 		{
 		kind: "primary",
