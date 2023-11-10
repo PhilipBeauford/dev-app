@@ -34,7 +34,7 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
                 // Remove added donations/cart lines
                 const result2 = await applyCartLinesChange({
                     type: "removeCartLine",
-                    id: filteredArray[0].id, // Needs reliable line item id number
+                    id: filteredArray[0].id, // Needs reliable line item id number 
                     quantity: 1,
                 });
             }
