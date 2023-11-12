@@ -22,7 +22,7 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
         if(value) {
             let filteredArray = [];
 
-            // Grab line objects only if titles match donation
+            // Grab line objects only if titles match donation 
             lines.current.forEach(lineObj => {
                 if(lineObj.merchandise.title == 'Carry On Foundation Donation') {
                     filteredArray.push(lineObj);
