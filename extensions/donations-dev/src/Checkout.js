@@ -27,7 +27,7 @@ export default extension('Checkout::Dynamic::Render', (root, { lines, applyCartL
                 if(lineObj.merchandise.title == 'Carry On Foundation Donation') {
                     filteredArray.push(lineObj);
                 }
-            })
+            }) 
 
             if(filteredArray.length > 1 && filteredArray[0] != filteredArray.lastItem) {
 
